@@ -19,10 +19,6 @@
  
   <div id="container" class="clearfix"> 
     
-    <ul id="tabs"> 
-      <li><a href="/" id="current">Home</a></li> 
-      <li><a href="/home/design">Design Help</a></li> 
-    </ul> 
   
     <!-- Flash error & notice--> 
     
@@ -42,7 +38,7 @@
 
     {{ 'layout.css'                | asset_url        | stylesheet_tag }}
     {{ 'lightbox/v2/lightbox.css'  | global_asset_url | stylesheet_tag }}
-    {{ 'lightbox/v2/lightbox.js'  | global_asset_url | script_tag }}
+    {{ 'lightbox/v2/lightbox.js'   | global_asset_url | script_tag }}
 
     {{content_for_header }}  
   </head>
