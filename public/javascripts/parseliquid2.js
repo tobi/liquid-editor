@@ -16,11 +16,10 @@ if (!Array.prototype.forEach)
 }
 
 
-var LiquidParser = Editor.Parser = (function() {
-  
-    var isPunctuation = /[\.\|\=\:\[\]]/;
+var LiquidParser = Editor.Parser =(function() {
     var isQuote = /[\'\"]/;
     var isWordChar = /[\w\_]/
+    var isPunctuation = /[\.\|\=\:\[\]]/;
     
     var keywords = {};
     

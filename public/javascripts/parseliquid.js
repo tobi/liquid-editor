@@ -6,7 +6,7 @@
  * {useHTMLKludges: false} as parserConfig option.
  */
 
-var XMLParser = Editor.Parser = (function() {
+var LiquidParser = Editor.Parser = (function() {
   var Kludges = {
     autoSelfClosers: {"br": true, "img": true, "hr": true, "link": true, "input": true,
                       "meta": true, "col": true, "frame": true, "base": true, "area": true},
@@ -15,6 +15,16 @@ var XMLParser = Editor.Parser = (function() {
   var NoKludges = {autoSelfClosers: {}, doNotIndent: {"!cdata": true}};
   var UseKludges = Kludges;
   var alignCDATA = false;
+    
+  var isQuote = /[\'\"]/;
+  var isWordChar = /[\w\_]/
+  var isPunctuation = /[\.\|\=\:]/;
+  
+  var keywords = {};
+  
+  ['in'].forEach(function(element, index, array) {
+    keywords[element] = true;
+  });
 
   // Simple stateful tokenizer for XML documents. Returns a
   // MochiKit-style iterator, with a state property that contains a
@@ -62,7 +72,7 @@ var XMLParser = Editor.Parser = (function() {
         }
         if (source.equals("%")) {
           source.next();
-          setState(inLiquidTag);
+          setState(inLiquidTagName);
           return 'liquid-punctuation';
         }
         else {
@@ -109,44 +119,63 @@ var XMLParser = Editor.Parser = (function() {
     function inLiquidOutput(source, setState) {
       var ch = source.next();
       if (ch == "}") {
-        if (source.equals('}')) {
-          source.next()
+        if(source.equals("}")) {
+          source.next();
           setState(inText);
           return "liquid-punctuation";
+        }         
+        else {
+          setState(inText);
+          return "liquid-bad-punctuation";
         }
       }
-      else if (/[\'\"]/.test(ch)) {
+      else if (isQuote.test(ch)) {
         setState(inLiquidString(ch, inLiquidOutput));
         return null;        
       }
-      else if (/[\|\=\:]/.test(ch)) {
+      else if (isPunctuation.test(ch)) {
         return "liquid-punctuation";
       }
-      else {
-        source.nextWhileMatches(/[\s\n]/);
-        return "liquid-text";
-      }
+
+      return "liquid-text";
+    }
+    
+    function inLiquidTagName(source, setState) {
+      source.nextWhileMatches(isWordChar);
+      setState(inLiquidTag);
+      return "liquid-tag-name";      
     }
 
     function inLiquidTag(source, setState) {
       var ch = source.next();
       if (ch == "%") {
-        if (source.equals('}')) {
-          source.next()
+        if(source.equals("}")) {
+          source.next();
           setState(inText);
           return "liquid-punctuation";
         }
       }
-      else if (/[\'\"]/.test(ch)) {
+      else if (isQuote.test(ch)) {
         setState(inLiquidString(ch, inLiquidTag));
         return null;        
       }
-      else if (/[\|\=\:]/.test(ch)) {
+      else if (isPunctuation.test(ch)) {
         return "liquid-punctuation";
       }
+      else {        
+        return readWord(source, keywords)
+      }
+    }
+    
+    function readWord(source, keywords) {
+      source.nextWhileMatches(isWordChar);      
+      var word = source.get();
+            
+      if (keywords && keywords.propertyIsEnumerable(word)) {
+        return {type: "string", style: "liquid-keyword", content: word};
+      }
       else {
-        source.nextWhileMatches(/ \n/);
-        return "liquid-text";
+        return {type: "string", style: "liquid-text", content: word};
       }
     }
     
@@ -255,7 +284,7 @@ var XMLParser = Editor.Parser = (function() {
       return pass(element, base);
     }
     var harmlessTokens = {"xml-text": true, "xml-entity": true, "xml-comment": true, "xml-processing": true};
-    var liquidTokens = {"liquid-punctuation": true, "liquid-variable": true, "liquid-text": true, "liquid-string": true};
+    var liquidTokens = {"liquid-punctuation": true, "liquid-bad-punctuation": true, "liquid-keyword": true, "liquid-tag-name": true, "liquid-variable": true, "liquid-text": true, "liquid-string": true};
     function element(style, content) {
       if (content == "<") cont(tagname, attributes, endtag(tokenNr == 1));
       else if (content == "</") cont(closetagname, expect(">"));
@@ -281,6 +310,16 @@ var XMLParser = Editor.Parser = (function() {
     }
     function closetagname(style, content) {
       if (style == "xml-name" && context && content.toLowerCase() == context.name) {
+        popContext();
+        mark("xml-tagname");
+      }
+      else {
+        mark("xml-error");
+      }
+      cont();
+    }
+    function closeliquidtagname(style, content) {
+      if (style == "liquid-tag-name" && context && content.toLowerCase() == context.name) {
         popContext();
         mark("xml-tagname");
       }

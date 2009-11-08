@@ -128,12 +128,11 @@
    </style> 
   
   <script type="text/javascript"> 
-    var editor = CodeMirror.fromTextArea('code', {
+    CodeMirror.fromTextArea('code', {
       height: "600px",
-      parserfile: "../../javascripts/parseliquid.js",
-      stylesheet: "/stylesheets/liquidcolors.css",
+      parserfile: "../../javascripts/parseliquid.js"  ,
+      stylesheet: ["/codemirror/css/xmlcolors.css", "/stylesheets/liquidcolors.css"],
       path: "codemirror/js/",
-      continuousScanning: 500,
       textWrapping: false,
       lineNumbers: true
     });
