@@ -6,6 +6,10 @@ I hope this will become a full fledged Liquid parser in the future and will beco
 standard editor control for all hosted applications that support liquid. Syntax highlighting
 and on the fly error checking should help customers a lot while editing.
 
+== Demo 
+
+http://liquid-editor.heroku.com/index.html
+
 == Screenshot
 
 http://img.skitch.com/20091108-xbu4cgbqpne6dxyk36hdte4sgg.png
