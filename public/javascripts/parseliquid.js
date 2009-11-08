@@ -57,7 +57,7 @@ var XMLParser = Editor.Parser = (function() {
       else if (ch == "{") {        
         if (source.equals("{")) {
           source.next();
-          setState(inLiquidVariable);
+          setState(inLiquidOutput);
           return 'liquid-punctuation';
         }
         if (source.equals("%")) {
@@ -106,7 +106,7 @@ var XMLParser = Editor.Parser = (function() {
       }
     }
 
-    function inLiquidVariable(source, setState) {
+    function inLiquidOutput(source, setState) {
       var ch = source.next();
       if (ch == "}") {
         if (source.equals('}')) {
@@ -116,7 +116,7 @@ var XMLParser = Editor.Parser = (function() {
         }
       }
       else if (/[\'\"]/.test(ch)) {
-        setState(inLiquidString(ch, inLiquidVariable));
+        setState(inLiquidString(ch, inLiquidOutput));
         return null;        
       }
       else if (/[\|\=\:]/.test(ch)) {

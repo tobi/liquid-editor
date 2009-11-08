@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+<head> 
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+	<meta http-equiv="imagetoolbar" content="no" /> 
+	<meta name="MSSmartTagsPreventParsing" content="true" /> 
+ 
+  <title>Liquid Test</title> 
+ 
+  <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css" /> 
+</head> 
+	
+<body> 
+  
+  <div id="header"> 
+    <h1><a href="/">Liquid Editor</a></h1>      
+    
+  </div> 
+ 
+  <div id="container" class="clearfix"> 
+    
+    
+    <ul id="tabs"> 
+      <li><a href="/" >Mixed Mode</a></li> 
+      <li><a href="/standalone.html" id="current">Standalone Liquid</a></li> 
+    </ul> 
+    
+  
+    <!-- begin div.main--> 
+    <div id="main"> 
+      
+<div> 
+  <textarea id="code" cols="140" rows="40">
+{ 'layout.css'                | asset_url        | stylesheet_tag }
+{ 'lightbox/v2/lightbox.css'  | global_asset_url | stylesheet_tag }
+{ 'lightbox/v2/lightbox.js'   | global_asset_url | script_tag }
+
+{content_for_header}
+
+% for link in linklists.footer.links %
+<li>{ link.title | link_to: link.url }</li>
+% endfor %
+  </textarea> 
+  
+  <script src="codemirror/js/codemirror.js" type="text/javascript"></script> 
+ 
+  <style type="text/css"> 
+     .CodeMirror-line-numbers {
+       width: 2.2em;
+       color: #aaa;
+       background-color: #eee;
+       text-align: right;
+       padding-right: .3em;
+       font-size: 10pt;
+       font-family: monospace;
+       padding-top: .4em;
+     }
+   </style> 
+  
+  <script type="text/javascript"> 
+    var editor = CodeMirror.fromTextArea('code', {
+      height: "600px",
+      parserfile: "../../javascripts/parseliquid2.js",
+      stylesheet: "/stylesheets/liquidcolors.css",
+      path: "codemirror/js/",
+      //continuousScanning: 500,
+      textWrapping: false,
+      lineNumbers: true
+    });
+  </script> 
+  
+</div>   
+    </div> 
+    <!-- end div.main --> 
+        
+  </div> 
+    
+</body> 
+</html>

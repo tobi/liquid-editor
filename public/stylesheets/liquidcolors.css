@@ -69,3 +69,15 @@ span.liquid-string {
   color: green;
   background-color: #eee;
 }
+
+span.liquid-tag-name {
+  color: green;
+  font-weight: bold;
+  background-color: #eee;
+}
+
+span.liquid-keyword {
+  color: green;
+  font-weight: bold;
+  background-color: #eee;
+}
