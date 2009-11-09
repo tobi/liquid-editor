@@ -154,6 +154,10 @@ var LiquidParser = Editor.Parser = (function() {
           setState(inText);
           return "liquid-punctuation";
         }
+        else {
+          setState(inText);
+          return "liquid-bad-punctuation";
+        }
       }
       else if (isQuote.test(ch)) {
         setState(inLiquidString(ch, inLiquidTag));
