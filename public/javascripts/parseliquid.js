@@ -20,11 +20,7 @@ var LiquidParser = Editor.Parser = (function() {
   var isWordChar = /[\w\_]/
   var isPunctuation = /[\.\|\=\:]/;
   
-  var keywords = {};
-  
-  ['in'].forEach(function(element, index, array) {
-    keywords[element] = true;
-  });
+  var keywords = {'in': true, 'by': true};
 
   // Simple stateful tokenizer for XML documents. Returns a
   // MochiKit-style iterator, with a state property that contains a
