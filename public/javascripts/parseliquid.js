@@ -10,7 +10,7 @@ var LiquidParser = Editor.Parser = (function() {
   var Kludges = {
     autoSelfClosers: {"br": true, "img": true, "hr": true, "link": true, "input": true,
                       "meta": true, "col": true, "frame": true, "base": true, "area": true},
-    doNotIndent: {"pre": true, "!cdata": true}
+    doNotIndent:     {"pre": true, "!cdata": true}
   };
   var NoKludges = {autoSelfClosers: {}, doNotIndent: {"!cdata": true}};
   var UseKludges = Kludges;
@@ -22,9 +22,6 @@ var LiquidParser = Editor.Parser = (function() {
   
   var keywords = {'in': true, 'by': true};
 
-  // Simple stateful tokenizer for XML documents. Returns a
-  // MochiKit-style iterator, with a state property that contains a
-  // function encapsulating the current state. See tokenize.js.
   var tokenizeXML = (function() {
     function inText(source, setState) {
       var ch = source.next();
@@ -132,7 +129,7 @@ var LiquidParser = Editor.Parser = (function() {
       else if (isPunctuation.test(ch)) {
         return "liquid-punctuation";
       }
-
+      
       return "liquid-text";
     }
     
@@ -142,7 +139,7 @@ var LiquidParser = Editor.Parser = (function() {
       return "liquid-tag-name";      
     }
 
-    function inLiquidTag(source, setState) {
+    function inLiquidTag(source, setState) {      
       var ch = source.next();
       if (ch == "%") {
         if(source.equals("}")) {
@@ -285,16 +282,16 @@ var LiquidParser = Editor.Parser = (function() {
     }
     var harmlessTokens = {"xml-text": true, "xml-entity": true, "xml-comment": true, "xml-processing": true};
     var liquidTokens = {"liquid-punctuation": true, "liquid-bad-punctuation": true, "liquid-keyword": true, "liquid-tag-name": true, "liquid-variable": true, "liquid-text": true, "liquid-string": true};
-    function element(style, content) {
-      if (content == "<") cont(tagname, attributes, endtag(tokenNr == 1));
+    function element(style, content) {      
+      if (liquidTokens.hasOwnProperty(style)) cont();
+      else if (harmlessTokens.hasOwnProperty(style)) cont();            
+      else if (content == "<") cont(tagname, attributes, endtag(tokenNr == 1));
       else if (content == "</") cont(closetagname, expect(">"));
       else if (style == "xml-cdata") {
         if (!context || context.name != "!cdata") pushContext("!cdata");
         if (/\]\]>$/.test(content)) popContext();
         cont();
       }
-      else if (harmlessTokens.hasOwnProperty(style)) cont();
-      else if (liquidTokens.hasOwnProperty(style)) cont();
       else mark("xml-error") || cont();
     }
     function tagname(style, content) {
