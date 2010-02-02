@@ -1,5 +1,5 @@
 
-span.liquid-punctuation {
+span.liquid-punctuation, span.liquid-start-punctuation, span.liquid-end-punctuation {
   color: silver;
 }
 
