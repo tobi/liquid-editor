@@ -34,11 +34,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-{% if cart.items < 5 %}
-<p> Wow you got lots of stuff! </p>
-{% endif %}
-
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -51,6 +46,10 @@
     {{content_for_header }}  
   </head>
   <body>
+        
+    {% if cart.items < 5 %}
+    <p> Wow you got lots of stuff! </p>
+    {% endif %}
     
     {% if cart.items > 3 %}
     <p> You are not buying enough! </p>
