@@ -64,12 +64,12 @@ var LiquidParser = Editor.Parser = (function() {
         if (source.equals("{")) {
           source.next();
           setState(inLiquidOutput);
-          return 'liquid-punctuation';
+          return 'liquid-start-punctuation';
         }
         if (source.equals("%")) {
           source.next();
           setState(inLiquidTagName);
-          return 'liquid-punctuation';
+          return 'liquid-start-punctuation';
         }
         else {
           return "xml-text";
@@ -118,7 +118,7 @@ var LiquidParser = Editor.Parser = (function() {
         if(source.equals("}")) {
           source.next();
           setState(inText);
-          return "liquid-punctuation";
+          return "liquid-end-punctuation";
         }         
         else {
           setState(inText);
@@ -148,7 +148,7 @@ var LiquidParser = Editor.Parser = (function() {
         if(source.equals("}")) {
           source.next();
           setState(inText);
-          return "liquid-punctuation";
+          return "liquid-end-punctuation";
         }
         else {
           setState(inText);
@@ -285,8 +285,10 @@ var LiquidParser = Editor.Parser = (function() {
     }
     var harmlessTokens = {"xml-text": true, "xml-entity": true, "xml-comment": true, "xml-processing": true};
     var liquidTokens = {"liquid-punctuation": true, "liquid-bad-punctuation": true, "liquid-keyword": true, "liquid-tag-name": true, "liquid-variable": true, "liquid-text": true, "liquid-string": true};
+    var liquidDelimiterTokens = {"liquid-start-punctuation": true, "liquid-end-punctuation": true};
     function element(style, content) {
-      if (content == "<") cont(tagname, attributes, endtag(tokenNr == 1));
+      if (content == "<" && (!context || context.name != "liquid"))
+        cont(tagname, attributes, endtag(tokenNr == 1));
       else if (content == "</") cont(closetagname, expect(">"));
       else if (style == "xml-cdata") {
         if (!context || context.name != "!cdata") pushContext("!cdata");
@@ -295,6 +297,13 @@ var LiquidParser = Editor.Parser = (function() {
       }
       else if (harmlessTokens.hasOwnProperty(style)) cont();
       else if (liquidTokens.hasOwnProperty(style)) cont();
+      else if (liquidDelimiterTokens.hasOwnProperty(style)) {
+        if (style == "liquid-start-punctuation")
+          pushContext("liquid");
+        else
+          popContext();
+        cont();
+      }
       else mark("xml-error") || cont();
     }
     function tagname(style, content) {
